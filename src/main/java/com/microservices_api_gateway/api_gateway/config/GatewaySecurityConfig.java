@@ -7,15 +7,17 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 public class GatewaySecurityConfig {
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
-                .csrf(csrf -> csrf.disable())          // Disable CSRF
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .anyExchange().permitAll()          // Allow all requests without authentication
+                        .pathMatchers("/user-service/admin/userLogin").permitAll()
+                        .pathMatchers("/auth-service/**").permitAll()         // allow login/register
+                        .pathMatchers("/user-service/admins").authenticated()     // protect user service
+                        .anyExchange().denyAll()                              // deny everything else by default
                 )
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);  // Disable HTTP Basic auth
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);
 
         return http.build();
     }
