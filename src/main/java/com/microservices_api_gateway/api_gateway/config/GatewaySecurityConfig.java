@@ -11,14 +11,15 @@ public class GatewaySecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)  // ✅ IMPORTANT: disable browser popup
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/user-service/admin/userLogin").permitAll()
-                        .pathMatchers("/auth-service/**").permitAll()         // allow login/register
-                        .pathMatchers("/user-service/admins").authenticated()     // protect user service
-                        .anyExchange().denyAll()                              // deny everything else by default
-                )
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);
-
+                        .pathMatchers(
+                                "/auth-service/user/login",
+                                "/user-service/admin/userLogin",
+                                "/auth-service/extract-username"
+                        ).permitAll()
+                        .pathMatchers("/user-service/admins").permitAll()
+                );
         return http.build();
     }
 }
