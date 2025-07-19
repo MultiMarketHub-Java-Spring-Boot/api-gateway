@@ -16,7 +16,10 @@ public class GatewaySecurityConfig {
                         .pathMatchers(
                                 "/auth-service/user/login",
                                 "/user-service/admin/userLogin",
-                                "/auth-service/extract-username"
+                                "/user-service/hello",
+                                "/auth-service/extract-username",
+                                "/product-service/listProducts",
+                                "/store-service/stores"
                         ).permitAll()
                         .pathMatchers("/user-service/admins").permitAll()
                 );
